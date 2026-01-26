@@ -1,21 +1,21 @@
-# Proyecto Playwright - Automatizaci�n de B�squeda de Empleos
+# Proyecto Playwright - Automatización de Búsqueda de Empleos
 
-Proyecto de automatizaci�n de pruebas para buscar y listar vacantes de empleo en portales de trabajo usando Playwright.
+Proyecto de automatización de pruebas para buscar y listar vacantes de empleo en portales de trabajo usando Playwright.
 
-## Caracter�sticas
+## Características
 
-- **B�squeda personalizada**: Busca empleos seg�n el rol y ubicaci�n que especifiques
+- **Búsqueda personalizada**: Busca empleos según el rol y ubicación que especifiques
 - **Listado completo**: Muestra todas las vacantes encontradas con detalles
 - **Multi-navegador**: Pruebas en Chrome, Firefox y Safari
-- **Informaci�n detallada**: T�tulo, empresa, ubicaci�n, salario y link de cada vacante
-- **Configurable**: Usa variables de entorno para personalizar la b�squeda
+- **Información detallada**: Título, empresa, ubicación, salario y link de cada vacante
+- **Configurable**: Usa variables de entorno para personalizar la búsqueda
 
 ## Requisitos
 
-- Node.js (versi�n 14 o superior)
+- Node.js (versión 14 o superior)
 - npm
 
-## Instalaci�n
+## Instalación
 
 1. Clona o descarga el proyecto
 2. Instala las dependencias:
@@ -24,15 +24,15 @@ Proyecto de automatizaci�n de pruebas para buscar y listar vacantes de empleo 
 npm install
 ```
 
-3. Copia el archivo de ejemplo y config�ralo:
+3. Copia el archivo de ejemplo y configúralo:
 
 ```bash
 copy .env.example .env
 ```
 
-## Configuraci�n
+## Configuración
 
-Edita el archivo `.env` con tus par�metros de b�squeda:
+Edita el archivo `.env` con tus parámetros de búsqueda:
 
 ```env
 TARGET_ROLE=QA Automation
@@ -41,7 +41,7 @@ LOCATION=Colombia
 
 ## Uso
 
-### Ejecutar b�squeda de empleos
+### Ejecutar búsqueda de empleos
 
 ```bash
 npm test
@@ -55,11 +55,11 @@ npm run test:ui        # Interfaz interactiva
 npm run test:report    # Ver reporte HTML
 ```
 
-## Informaci�n Extra�da
+## Información Extraída
 
 Para cada vacante encontrada:
-- T�tulo del puesto
+- Título del puesto
 - Empresa
-- Ubicaci�n
-- Salario (si est� disponible)
+- Ubicación
+- Salario (si está disponible)
 - Link directo a la oferta
