@@ -10,13 +10,13 @@ test.describe('Job Search Automation', () => {
     await computrabajo.navigate('https://www.computrabajo.com.co/empleos');
     await computrabajo.searchJob(config.TARGET_ROLE, config.LOCATION);
     
-    // Obtener todas las vacantes
-    const jobs = await computrabajo.getAllJobs();
+    // Obtener todas las vacantes (con o sin filtro de 24h)
+    const jobs = await computrabajo.getAllJobs(config.FILTER_24H);
     
     // Validar que se encontraron resultados
     expect(jobs.length).toBeGreaterThan(0);
     
     // Listar todas las vacantes encontradas
-    computrabajo.printJobList(jobs, config.TARGET_ROLE);
+    computrabajo.printJobList(jobs, config.TARGET_ROLE, config.FILTER_24H);
   });
 });

@@ -1,5 +1,6 @@
 import { BasePage } from './basePage.js';
 import { expect } from '@playwright/test';
+import { isWithinTimeRange } from '../utils/timeHelper.js';
 
 export class ComputrabajoPage extends BasePage {
   constructor(page) {
@@ -25,7 +26,7 @@ export class ComputrabajoPage extends BasePage {
     return await this.jobCards.count();
   }
 
-  async getAllJobs() {
+  async getAllJobs(filterBy24h = false) {
     const count = await this.getJobCount();
     const jobs = [];
 
@@ -46,15 +47,41 @@ export class ComputrabajoPage extends BasePage {
         // Salario
         const salary = await jobCard.locator('.tag.base').first().textContent({ timeout: 2000 }).catch(() => 'No especificado');
         
+        // Fecha de publicación - Intentar extraer de varios lugares posibles
+        let publishedTime = 'No especificada';
+        try {
+          // Buscar elementos que contengan texto relacionado con tiempo
+          const allSpans = await jobCard.locator('span').allTextContents();
+          for (const text of allSpans) {
+            const lowerText = text.toLowerCase().trim();
+            // Buscar patrones de fecha: "hace X horas", "hace X días", "hoy", "ayer"
+            if (lowerText.includes('hace') || lowerText === 'hoy' || lowerText === 'ayer') {
+              publishedTime = text.trim();
+              break;
+            }
+          }
+        } catch (e) {
+          publishedTime = 'No especificada';
+        }
+        
+        // Filtrar por 24 horas si está habilitado
+        // IMPORTANTE: Si no se pudo extraer fecha, INCLUIR la vacante (enfoque permisivo)
+        if (filterBy24h && publishedTime !== 'No especificada') {
+          if (!isWithinTimeRange(publishedTime, 24)) {
+            continue; // Saltar esta vacante si está fuera de las 24 horas
+          }
+        }
+        
         // Link
         const link = await titleElement.first().getAttribute('href', { timeout: 5000 });
 
         jobs.push({
-          position: i + 1,
+          position: jobs.length + 1,
           title: title?.trim() || 'Sin título',
           company: company?.trim() || 'No especificada',
           location: location?.trim().replace(/\s+/g, ' ') || 'No especificada',
           salary: salary?.trim() || 'No especificado',
+          publishedTime: publishedTime?.trim() || 'No especificada',
           link: link ? `https://www.computrabajo.com.co${link}` : 'No disponible'
         });
       } catch (error) {
@@ -65,9 +92,13 @@ export class ComputrabajoPage extends BasePage {
     return jobs;
   }
 
-  printJobList(jobs, searchRole) {
+  printJobList(jobs, searchRole, filtered24h = false) {
     console.log('\n' + '='.repeat(80));
-    console.log(`VACANTES ENCONTRADAS PARA: "${searchRole}"`);
+    if (filtered24h) {
+      console.log(`VACANTES DE LAS ÚLTIMAS 24 HORAS PARA: "${searchRole}"`);
+    } else {
+      console.log(`VACANTES ENCONTRADAS PARA: "${searchRole}"`);
+    }
     console.log('='.repeat(80) + '\n');
 
     if (jobs.length === 0) {
@@ -80,6 +111,7 @@ export class ComputrabajoPage extends BasePage {
       console.log(`    🏢 Empresa: ${job.company}`);
       console.log(`    📍 Ubicación: ${job.location}`);
       console.log(`    💰 Salario: ${job.salary}`);
+      console.log(`    ⏰ Publicado: ${job.publishedTime}`);
       console.log(`    🔗 Link: ${job.link}`);
       console.log('');
     });
