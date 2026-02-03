@@ -45,32 +45,10 @@ export class ComputrabajoPage extends BasePage {
         const location = await jobCard.locator('p.fs16').nth(1).textContent({ timeout: 5000 }).catch(() => 'No especificada');
 
         // Salario
-        const salary = await jobCard.locator('.tag.base').first().textContent({ timeout: 2000 }).catch(() => 'No especificado');
+        const salary = await jobCard.locator('span:has(.icon.i_salary)').first().innerText({ timeout: 2000 }).then(t => t.trim()).catch(() => 'No especificado');
 
-        // Fecha de publicación - Intentar extraer de varios lugares posibles
-        let publishedTime = 'No especificada';
-        try {
-          // Buscar elementos que contengan texto relacionado con tiempo
-          const allSpans = await jobCard.locator('span').allTextContents();
-          for (const text of allSpans) {
-            const lowerText = text.toLowerCase().trim();
-            // Buscar patrones de fecha: "hace X horas", "hace X días", "hoy", "ayer"
-            if (lowerText.includes('hace') || lowerText === 'hoy' || lowerText === 'ayer') {
-              publishedTime = text.trim();
-              break;
-            }
-          }
-        } catch (e) {
-          publishedTime = 'No especificada';
-        }
-
-        // Filtrar por 24 horas si está habilitado
-        // IMPORTANTE: Si no se pudo extraer fecha, INCLUIR la vacante (enfoque permisivo)
-        if (filterBy24h && publishedTime !== 'No especificada') {
-          if (!isWithinTimeRange(publishedTime, 24)) {
-            continue; // Saltar esta vacante si está fuera de las 24 horas
-          }
-        }
+        // Fecha de publicación
+        const publishedTime = await jobCard.locator('p.fc_aux.fs13').first().textContent({ timeout: 5000 }).then(t => t.trim()).catch(() => 'No especificado');
 
         // Link
         const link = await titleElement.first().getAttribute('href', { timeout: 5000 });
