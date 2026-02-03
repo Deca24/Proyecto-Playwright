@@ -19,7 +19,7 @@ export class ComputrabajoPage extends BasePage {
     await this.searchButton.click();
     await this.page.waitForLoadState('domcontentloaded');
     // Esperar a que aparezcan los resultados
-    await this.jobCards.first().waitFor({ timeout: 15000 }).catch(() => {});
+    await this.jobCards.first().waitFor({ timeout: 15000 }).catch(() => { });
   }
 
   async getJobCount() {
@@ -32,21 +32,21 @@ export class ComputrabajoPage extends BasePage {
 
     for (let i = 0; i < count; i++) {
       const jobCard = this.jobCards.nth(i);
-      
+
       try {
         // Título del trabajo
         const titleElement = jobCard.locator('h2 a.js-o-link, h2 a');
         const title = await titleElement.first().textContent({ timeout: 5000 });
-        
+
         // Empresa
-        const company = await jobCard.locator('p.fs16').first().textContent({ timeout: 5000 }).catch(() => 'No especificada');
-        
+        const company = await jobCard.locator('a[offer-grid-article-company-url]').first().innerText({ timeout: 10000 }).then(t => t.trim()).catch(() => 'No especificada');
+
         // Ubicación
         const location = await jobCard.locator('p.fs16').nth(1).textContent({ timeout: 5000 }).catch(() => 'No especificada');
-        
+
         // Salario
         const salary = await jobCard.locator('.tag.base').first().textContent({ timeout: 2000 }).catch(() => 'No especificado');
-        
+
         // Fecha de publicación - Intentar extraer de varios lugares posibles
         let publishedTime = 'No especificada';
         try {
@@ -63,7 +63,7 @@ export class ComputrabajoPage extends BasePage {
         } catch (e) {
           publishedTime = 'No especificada';
         }
-        
+
         // Filtrar por 24 horas si está habilitado
         // IMPORTANTE: Si no se pudo extraer fecha, INCLUIR la vacante (enfoque permisivo)
         if (filterBy24h && publishedTime !== 'No especificada') {
@@ -71,7 +71,7 @@ export class ComputrabajoPage extends BasePage {
             continue; // Saltar esta vacante si está fuera de las 24 horas
           }
         }
-        
+
         // Link
         const link = await titleElement.first().getAttribute('href', { timeout: 5000 });
 
@@ -108,11 +108,11 @@ export class ComputrabajoPage extends BasePage {
 
     jobs.forEach(job => {
       console.log(`[${job.position}] ${job.title}`);
-      console.log(`    🏢 Empresa: ${job.company}`);
-      console.log(`    📍 Ubicación: ${job.location}`);
-      console.log(`    💰 Salario: ${job.salary}`);
-      console.log(`    ⏰ Publicado: ${job.publishedTime}`);
-      console.log(`    🔗 Link: ${job.link}`);
+      console.log(`🏢 Empresa: ${job.company}`);
+      console.log(`📍 Ubicación: ${job.location}`);
+      console.log(`💰 Salario: ${job.salary}`);
+      console.log(`⏰ Publicado: ${job.publishedTime}`);
+      console.log(`🔗 Link: ${job.link}`);
       console.log('');
     });
 

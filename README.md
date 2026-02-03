@@ -49,6 +49,7 @@ FILTER_24H=true
 - **FILTER_24H**: 
   - `true`: Solo muestra vacantes publicadas en las últimas 24 horas
   - `false`: Muestra todas las vacantes encontradas (valor por defecto)
+  - **Nota**: La extracción de fechas depende del formato HTML del portal. Si las fechas muestran "No especificada", el portal podría no mostrar fechas en el listado principal o el selector necesita ajuste.
 
 ## Uso
 
